@@ -17,45 +17,45 @@
   The following instructions use AWS CloudShell, a browser-based shell that simplifies deployment by providing a predictable, reproducible environment.
   1. Log into the AWS Management Console and launch CloudShell.
   2. Install utilities for the yum package manager.
-     #+begin_src bash
+     #+begin_src shell
      sudo yum install -y yum-utils
      #+end_src
   3. Add the Terraform repository.
-     #+begin_src bash
+     #+begin_src shell
      sudo yum-config-manager \
            --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
      #+end_src
   4. Install the terraform packages.
-     #+begin_src bash
+     #+begin_src shell
      sudo yum install -y terraform
      #+end_src
   5. Clone the repository.
-     #+begin_src bash
+     #+begin_src shell
      git clone https://github.com/RhubarbSin/terraform-aws-vpn-ec2-libreswan-example.git
      #+end_src
   6. Change to the repository's directory.
-     #+begin_src bash
+     #+begin_src shell
      cd terraform-aws-vpn-ec2-libreswan-example
      #+end_src
   7. Initialize the working directory.
-     #+begin_src bash
+     #+begin_src shell
      terraform init
      #+end_src
   8. Validate the configuration.
-     #+begin_src bash
+     #+begin_src shell
      terraform validate
      #+end_src
   9. Generate an execution plan to see what actions Terraform would take to apply the current configuration.
-     #+begin_src bash
+     #+begin_src shell
      terraform plan
      #+end_src
   10. Create the infrastructure.
-      #+begin_src bash
+      #+begin_src shell
       terraform apply -auto-approve
       #+end_src
   11. After a few minutes, the VPN tunnel should be active and can be inspected and tested in various ways.
       - Show the status of the AWS VPN tunnel:
-        #+begin_src bash
+        #+begin_src shell
         aws ec2 describe-vpn-connections \
             --output text \
             --region us-east-2 \
@@ -63,21 +63,21 @@
             --vpn-connection-ids $(terraform output -raw vpn_connection_id)
         #+end_src
       - Show the status of the Libreswan VPN tunnel:
-        #+begin_src bash
+        #+begin_src shell
         ssh -o StrictHostKeyChecking=no \
             -i $(terraform output -raw ssh_key_file_name) \
             ec2-user@$(terraform output -raw libreswan_instance_public_ip) \
             sudo ipsec auto status
         #+end_src
       - Ping the EC2 instance on the AWS VPN end of the tunnel from the EC2 instance running Libreswan:
-        #+begin_src bash
+        #+begin_src shell
         ssh -o StrictHostKeyChecking=no \
             -i $(terraform output -raw ssh_key_file_name) \
             ec2-user@$(terraform output -raw libreswan_instance_public_ip) \
             ping -c 3 $(terraform output -raw vpn_instance_private_ip)
         #+end_src
       - Ping the EC2 instance running Libreswan from the EC2 instance on the AWS VPN end of the tunnel:
-        #+begin_src bash
+        #+begin_src shell
         ssh -o StrictHostKeyChecking=no \
             -i $(terraform output -raw ssh_key_file_name) \
             ec2-user@$(terraform output -raw vpn_instance_public_ip) \
@@ -85,7 +85,7 @@
         #+end_src
       The status of the AWS VPN can also be viewed via the AWS Management Console by selecting *Site-to-Site VPN connections* on the VPC Console.
   12. When finished, delete all of the resources by destroying the infrastructure.
-      #+begin_src bash
+      #+begin_src shell
       terraform apply -destroy -auto-approve
       #+end_src
 * Details
