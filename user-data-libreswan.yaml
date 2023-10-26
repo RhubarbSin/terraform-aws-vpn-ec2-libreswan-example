@@ -1,0 +1,57 @@
+## template: jinja
+#cloud-config
+fqdn: libreswan
+yum_repos:
+  fedora:
+    name: Fedora 36 - $basearch
+    baseurl: http://download.example/pub/fedora/linux/releases/36/Everything/$basearch/os/
+    metalink: https://mirrors.fedoraproject.org/metalink?repo=fedora-36&arch=$basearch
+    enabled: 1
+    countme: 1
+    metadata_expire: 7d
+    repo_gpgcheck: 0
+    type: rpm
+    gpgcheck: 1
+    gpgkey: https://getfedora.org/static/fedora.gpg
+    skip_if_unavailable: false
+packages:
+  - nmap-ncat
+  - libreswan
+write_files:
+  - path: /etc/sysctl.d/50-libreswan.conf
+    permissions: 0644
+    content: |
+      net.ipv4.ip_forward = 1
+      net.ipv4.conf.default.rp_filter = 0
+      net.ipv4.conf.default.accept_source_route = 0
+  - path: /etc/ipsec.d/aws.conf
+    permissions: 0644
+    content: |
+      conn Tunnel1
+              authby=secret
+              auto=start
+              left=%defaultroute
+              leftid=${libreswan_ip}
+              leftsourceip={{ ds.meta_data.local_ipv4 }}
+              right=${vpn_ip}
+              type=tunnel
+              ikelifetime=8h
+              keylife=1h
+              keyingtries=%forever
+              keyexchange=ike
+              leftsubnet=${libreswan_cidr_block}
+              rightsubnet=${vpn_cidr_block}
+              dpddelay=10
+              dpdtimeout=30
+              dpdaction=restart_by_peer
+  - path: /etc/ipsec.d/aws.secrets
+    permissions: 0600
+    content: |
+      ${libreswan_ip} ${vpn_ip}: PSK "${psk}"
+runcmd:
+  - grubby --args selinux=0 --update-kernel ALL
+  - systemctl enable ipsec
+power_state:
+  mode: reboot
+  timeout: 0
+  condition: true
