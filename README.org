@@ -91,5 +91,6 @@
 * Details
   The resources deployed include the following:
   - Two VPCs in separate regions
+  - One key pair to connect to the instances using SSH
   - One EC2 instance with an Elastic IP in each VPC
   - One site-to-site VPN connection communicating with Libreswan running on the EC2 instance in the other region
