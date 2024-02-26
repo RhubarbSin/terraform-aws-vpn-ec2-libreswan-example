@@ -18,7 +18,7 @@
   1. Log into the AWS Management Console and launch CloudShell.
   2. Install utilities for the yum package manager.
      #+begin_src shell
-     sudo yum install -y yum-utils
+     sudo dnf install -y yum-utils
      #+end_src
   3. Add the Terraform repository.
      #+begin_src shell
@@ -27,7 +27,7 @@
      #+end_src
   4. Install the terraform package.
      #+begin_src shell
-     sudo yum install -y terraform
+     sudo dnf install -y terraform
      #+end_src
   5. Clone the repository.
      #+begin_src shell
