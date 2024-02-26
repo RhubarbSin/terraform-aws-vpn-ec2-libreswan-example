@@ -28,6 +28,12 @@ output "ssh_key_file_name" {
   description = "The name of the file that contains the private SSH key used by the EC2 instances"
 }
 
+output "vpn_region" {
+  value = var.region.vpn_vpc
+
+  description = "The region in which the AWS VPN resides"
+}
+
 output "vpn_connection_id" {
   value = aws_vpn_connection.this.id
 

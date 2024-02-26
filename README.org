@@ -58,8 +58,8 @@
         #+begin_src shell
         aws ec2 describe-vpn-connections \
             --output text \
-            --region us-east-2 \
             --query VpnConnections[0].VgwTelemetry[0].Status \
+            --region $(terraform output -raw vpn_region) \
             --vpn-connection-ids $(terraform output -raw vpn_connection_id)
         #+end_src
       - Show the status of the Libreswan VPN tunnel:
