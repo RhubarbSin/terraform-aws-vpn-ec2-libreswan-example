@@ -95,12 +95,12 @@ resource "aws_vpn_connection_route" "this" {
 resource "random_pet" "this" {
   provisioner "local-exec" {
     when    = create
-    command = format("ssh-keygen -q -P '' -f ${path.module}/%s", self.id)
+    command = "ssh-keygen -q -P '' -f ${path.module}/${self.id}"
   }
 
   provisioner "local-exec" {
     when       = destroy
-    command    = format("rm ${path.module}/%s ${path.module}/%s.pub", self.id, self.id)
+    command    = "rm ${path.module}/${self.id} ${path.module}/${self.id}.pub"
     on_failure = continue
   }
 }
@@ -111,7 +111,7 @@ resource "aws_key_pair" "vpn" {
 }
 
 resource "aws_key_pair" "libreswan" {
-  public_key = file(format("%s.pub", random_pet.this.id))
+  public_key = file("${random_pet.this.id}.pub")
   key_name   = random_pet.this.id
 
   provider = aws.libreswan
