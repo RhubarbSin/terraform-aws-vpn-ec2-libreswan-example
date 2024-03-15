@@ -16,9 +16,9 @@
 * How to use it
   The following instructions use AWS CloudShell, a browser-based shell that simplifies deployment by providing a predictable, reproducible environment.
   1. Log into the AWS Management Console and launch CloudShell.
-  2. Install utilities for the yum package manager.
+  2. Install Yum-utils CLI compatibility layer.
      #+begin_src shell
-     sudo dnf install -y yum-utils
+     sudo dnf install -y dnf-utils
      #+end_src
   3. Add the Terraform repository.
      #+begin_src shell
