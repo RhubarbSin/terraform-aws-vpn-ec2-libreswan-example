@@ -18,7 +18,7 @@
   1. Log into the AWS Management Console and launch CloudShell.
   2. Install plugin for DNF.
      #+begin_src shell
-     sudo dnf install 'dnf-command(config-manager)'
+     sudo dnf install -y 'dnf-command(config-manager)'
      #+end_src
   3. Add the Terraform repository.
      #+begin_src shell
