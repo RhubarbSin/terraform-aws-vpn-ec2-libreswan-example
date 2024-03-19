@@ -16,14 +16,14 @@
 * How to use it
   The following instructions use AWS CloudShell, a browser-based shell that simplifies deployment by providing a predictable, reproducible environment.
   1. Log into the AWS Management Console and launch CloudShell.
-  2. Install Yum-utils CLI compatibility layer.
+  2. Install plugin for DNF.
      #+begin_src shell
-     sudo dnf install -y dnf-utils
+     sudo dnf install 'dnf-command(config-manager)'
      #+end_src
   3. Add the Terraform repository.
      #+begin_src shell
-     sudo yum-config-manager \
-           --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
+     sudo dnf config-manager \
+          --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
      #+end_src
   4. Install the terraform package.
      #+begin_src shell
