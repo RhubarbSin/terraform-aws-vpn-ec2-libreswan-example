@@ -106,7 +106,7 @@ resource "random_pet" "this" {
 }
 
 resource "aws_key_pair" "vpn" {
-  public_key = file(format("%s.pub", random_pet.this.id))
+  public_key = file("${random_pet.this.id}.pub")
   key_name   = random_pet.this.id
 }
 
