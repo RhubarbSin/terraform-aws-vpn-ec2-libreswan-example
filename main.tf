@@ -92,27 +92,30 @@ resource "aws_vpn_connection_route" "this" {
   vpn_connection_id      = aws_vpn_connection.this.id
 }
 
-resource "random_pet" "this" {
-  provisioner "local-exec" {
-    when    = create
-    command = "ssh-keygen -q -P '' -f ${path.module}/${self.id}"
-  }
+resource "tls_private_key" "this" {
+  algorithm = "ED25519"
+}
 
-  provisioner "local-exec" {
-    when       = destroy
-    command    = "rm ${path.module}/${self.id} ${path.module}/${self.id}.pub"
-    on_failure = continue
-  }
+resource "random_pet" "this" {}
+
+resource "local_file" "this" {
+  content  = tls_private_key.this.public_key_openssh
+  filename = "${path.module}/${random_pet.this.id}.pub"
+}
+
+resource "local_sensitive_file" "this" {
+  content  = tls_private_key.this.private_key_openssh
+  filename = "${path.module}/${random_pet.this.id}"
 }
 
 resource "aws_key_pair" "vpn" {
-  public_key = file("${random_pet.this.id}.pub")
   key_name   = random_pet.this.id
+  public_key = tls_private_key.this.public_key_openssh
 }
 
 resource "aws_key_pair" "libreswan" {
-  public_key = file("${random_pet.this.id}.pub")
   key_name   = random_pet.this.id
+  public_key = tls_private_key.this.public_key_openssh
 
   provider = aws.libreswan
 }
