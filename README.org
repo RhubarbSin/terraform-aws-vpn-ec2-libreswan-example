@@ -11,7 +11,7 @@
   - The following software:
     + Git
     + Terraform (version 1.3 or later)
-    + SSH (=ssh= and =ssh-keygen= executables)
+    + SSH
     + AWS CLI configured with credentials for the aforementioned privileges
 * How to use it
   The following instructions use AWS CloudShell, a browser-based shell that simplifies deployment by providing a predictable, reproducible environment.
