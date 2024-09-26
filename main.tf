@@ -34,18 +34,30 @@ resource "aws_eip" "libreswan" {
   provider = aws.libreswan
 }
 
+resource "random_integer" "this" {
+  min = 0
+  max = 254
+}
+
+locals {
+  cidr_block = {
+    vpn_vpc : coalesce(var.cidr_block.vpn_vpc, "192.168.${random_integer.this.result}.0/24"),
+    libreswan_vpc : coalesce(var.cidr_block.libreswan_vpc, "192.168.${random_integer.this.result + 1}.0/24"),
+  }
+}
+
 module "vpn_vpc" {
   source = "./modules/vpc"
 
-  cidr_block      = var.cidr_block.vpn_vpc
-  peer_cidr_block = var.cidr_block.libreswan_vpc
+  cidr_block      = local.cidr_block.vpn_vpc
+  peer_cidr_block = local.cidr_block.libreswan_vpc
 }
 
 module "libreswan_vpc" {
   source = "./modules/vpc"
 
-  cidr_block          = var.cidr_block.libreswan_vpc
-  peer_cidr_block     = var.cidr_block.vpn_vpc
+  cidr_block          = local.cidr_block.libreswan_vpc
+  peer_cidr_block     = local.cidr_block.vpn_vpc
   vpn_tunnel1_address = aws_vpn_connection.this.tunnel1_address
 
   providers = {
@@ -88,7 +100,7 @@ resource "aws_vpn_gateway_route_propagation" "this" {
 }
 
 resource "aws_vpn_connection_route" "this" {
-  destination_cidr_block = var.cidr_block.libreswan_vpc
+  destination_cidr_block = module.libreswan_vpc.cidr_block
   vpn_connection_id      = aws_vpn_connection.this.id
 }
 
@@ -152,8 +164,8 @@ data "cloudinit_config" "libreswan" {
       {
         libreswan_ip : aws_eip.libreswan.public_ip,
         vpn_ip : aws_vpn_connection.this.tunnel1_address,
-        libreswan_cidr_block : var.cidr_block.libreswan_vpc,
-        vpn_cidr_block : var.cidr_block.vpn_vpc,
+        libreswan_cidr_block : module.libreswan_vpc.cidr_block,
+        vpn_cidr_block : module.vpn_vpc.cidr_block,
         psk : aws_vpn_connection.this.tunnel1_preshared_key,
       }
     )

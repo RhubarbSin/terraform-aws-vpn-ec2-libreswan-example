@@ -25,7 +25,7 @@ variable "cidr_block" {
   )
 
   default = {
-    vpn_vpc       = "192.168.100.0/24"
-    libreswan_vpc = "192.168.200.0/24"
+    vpn_vpc       = null
+    libreswan_vpc = null
   }
 }
