@@ -23,7 +23,7 @@ output "libreswan_instance_private_ip" {
 }
 
 output "ssh_key_file_name" {
-  value = aws_key_pair.vpn.key_name
+  value = basename(local_sensitive_file.this.filename)
 
   description = "The name of the file that contains the private SSH key used by the EC2 instances"
 }
