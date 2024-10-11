@@ -1,6 +1,7 @@
 *
-!*/
 !.gitignore
+!LICENSE
+!*/
 !*.tf
 !*.yaml
 !*.org
